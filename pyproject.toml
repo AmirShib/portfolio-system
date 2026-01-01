@@ -1,0 +1,22 @@
+[project]
+name = "portfolio-system"
+version = "1.0.0"
+description = "Production-Grade AI Portfolio Manager"
+requires-python = ">=3.9"
+dependencies = [
+    "fastapi",
+    "uvicorn",
+    "numpy",
+    "pandas",
+    "yfinance",
+    "cvxpy",
+    "scipy",
+    "supabase",
+    "hmmlearn",
+    "numba",
+    "pydantic",
+    "pydantic-settings",
+    "vectorbt",
+    "redis",
+    "scikit-learn"
+]
