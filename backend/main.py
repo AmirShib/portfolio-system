@@ -23,9 +23,6 @@ async def lifespan(app: FastAPI):
     
     print("Startup: Loading Market Universe...")
     
-    # --- FIX START ---
-    # We add auto_adjust=True. 
-    # This forces 'Close' to be the Adjusted Close, preventing the KeyError.
     data = yf.download(
         settings.SECTORS + [settings.BENCHMARK], 
         period="5y", 
@@ -36,10 +33,8 @@ async def lifespan(app: FastAPI):
     if data.empty:
         print("Critical Error: Yahoo Finance returned no data.")
         raise RuntimeError("Market Data Download Failed")
-
-    # We now select "Close" because auto_adjust=True merged the adjustment into it
+    
     UNIVERSE = data["Close"]
-    # --- FIX END ---
     
     print(f"Data Loaded successfully. Assets: {len(UNIVERSE.columns)}")
     

@@ -5,7 +5,7 @@ from src.core.math_engine import SparseOptimizer
 from src.core.simulation import RegimeSimulator
 from src.core.backtester import BacktestEngine
 
-# --- Fixtures (Fake Data Generators) ---
+# Fixtures (Fake Data Generators)
 @pytest.fixture
 def mock_returns():
     """Generates 2 years of fake returns for 3 assets."""
@@ -23,7 +23,7 @@ def mock_prices():
     price_path = (1 + returns).cumprod()
     return pd.Series(price_path, name="Mock_Asset")
 
-# --- 1. Test Math Engine (Optimization) ---
+# Test Math Engine (Optimization)
 def test_l1_optimization_sparsity(mock_returns):
     """Does increasing Tau actually make the portfolio sparse?"""
     
@@ -46,7 +46,7 @@ def test_optimization_fallback(mock_returns):
     bad_returns.iloc[0, 0] = np.nan
     
     # This might trigger solver error or pandas error, 
-    # but let's test the robust handling of the class
+    # but we want to test the robust handling of the class
     try:
         w = SparseOptimizer.solve(bad_returns, tau=0.1)
         # Should simulate fallback or handle gracefully
@@ -54,7 +54,7 @@ def test_optimization_fallback(mock_returns):
     except:
         pass # If it raises, that's fine too, as long as it doesn't crash the simulation
 
-# --- 2. Test Simulation Engine (Numba) ---
+# Test Simulation Engine (Numba) 
 def test_regime_simulation(mock_returns):
     """Does the Monte Carlo engine return valid stats?"""
     sim = RegimeSimulator(mock_returns)
@@ -63,8 +63,6 @@ def test_regime_simulation(mock_returns):
     # Check HMM params were found
     assert "mus" in sim.params
     assert sim.params["mus"].shape == (2, 3) # 2 regimes, 3 assets (this is the simplified shape)
-    # Wait, the HMM learns means for the *assets* in each state?
-    # Actually, standard HMM in this project fits on the *multivariate* series.
     
     # Run Simulation
     weights = {"Asset_A": 0.5, "Asset_B": 0.5, "Asset_C": 0.0}
@@ -74,7 +72,7 @@ def test_regime_simulation(mock_returns):
     assert "var_95" in stats
     assert isinstance(stats["expected_return"], float)
 
-# --- 3. Test Backtester (VectorBT) ---
+# Test Backtester (VectorBT)
 def test_backtest_strategy(mock_prices):
     """Does the strategy engine calculate Sharpe?"""
     params = {'fast': 10, 'slow': 20}
